@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'screens/main_screen.dart';
 import 'bloc/countries/countries_bloc.dart';
+import 'bloc/countries/countries_event.dart';
 import 'services/countries_api_service.dart';
 import 'services/favorites_service.dart';
 
