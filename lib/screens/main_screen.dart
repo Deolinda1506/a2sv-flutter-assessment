@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
-import '../bloc/countries/countries_bloc.dart';
-import '../services/countries_api_service.dart';
-import '../services/favorites_service.dart';
 
 /// Main screen with bottom navigation bar
 class MainScreen extends StatefulWidget {
