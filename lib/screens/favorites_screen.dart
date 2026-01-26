@@ -29,6 +29,16 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     _loadFavorites();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh favorites when screen becomes visible
+    // This ensures favorites are updated when returning from other screens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadFavorites();
+    });
+  }
+
   Future<void> _loadFavorites() async {
     setState(() {
       _isLoading = true;
