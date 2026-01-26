@@ -5,7 +5,6 @@ import '../bloc/countries/countries_event.dart';
 import '../services/countries_api_service.dart';
 import '../services/favorites_service.dart';
 import '../models/country_summary.dart';
-import '../models/country_details.dart';
 import 'country_detail_screen.dart';
 
 /// Screen displaying list of favorite countries
