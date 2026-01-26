@@ -12,10 +12,10 @@ class FavoritesScreen extends StatefulWidget {
   const FavoritesScreen({super.key});
 
   @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
+  State<FavoritesScreen> createState() => FavoritesScreenState();
 }
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
+class FavoritesScreenState extends State<FavoritesScreen> {
   final FavoritesService _favoritesService = FavoritesService();
   final CountriesApiService _apiService = CountriesApiService();
   Map<String, String?> _favoriteCapitals = {}; // cca2 -> capital
@@ -29,15 +29,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     _loadFavorites();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Refresh favorites when screen becomes visible
-    // This ensures favorites are updated when returning from other screens
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadFavorites();
-    });
+  void refresh() {
+    _loadFavorites();
   }
+
+  Future<void> _loadFavorites() async {
+
+
 
   Future<void> _loadFavorites() async {
     setState(() {

@@ -12,10 +12,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
+  final GlobalKey<FavoritesScreenState> _favoritesKey = GlobalKey();
 
-  final List<Widget> _screens = [
+  late final List<Widget> _screens = [
     const HomeScreen(),
-    const FavoritesScreen(),
+    FavoritesScreen(key: _favoritesKey),
   ];
 
   @override
@@ -31,6 +32,10 @@ class _MainScreenState extends State<MainScreen> {
           setState(() {
             _currentIndex = index;
           });
+          // Refresh favorites when switching to favorites tab
+          if (index == 1 && _favoritesKey.currentState != null) {
+            _favoritesKey.currentState!.refresh();
+          }
         },
         type: BottomNavigationBarType.fixed,
         items: const [
