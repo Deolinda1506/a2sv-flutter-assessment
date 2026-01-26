@@ -34,10 +34,6 @@ class FavoritesScreenState extends State<FavoritesScreen> {
   }
 
   Future<void> _loadFavorites() async {
-
-
-
-  Future<void> _loadFavorites() async {
     setState(() {
       _isLoading = true;
       _error = null;
