@@ -6,6 +6,7 @@ import '../di/service_locator.dart';
 import '../models/country_details.dart';
 import '../services/countries_api_service.dart';
 import '../services/favorites_service.dart';
+import '../utils/layout.dart';
 import 'country_detail_screen.dart';
 
 /// Screen displaying list of favorite countries
@@ -157,11 +158,29 @@ class FavoritesScreenState extends State<FavoritesScreen> {
       );
     }
 
-    return ListView.builder(
+    final crossAxisCount = listGridCrossAxisCount(context);
+    if (crossAxisCount == 1) {
+      return ListView.builder(
+        itemCount: _favoriteCountries.length,
+        itemBuilder: (context, index) => _buildFavoriteItem(context, index),
+      );
+    }
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        childAspectRatio: 2.2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+      ),
+      padding: const EdgeInsets.all(8),
       itemCount: _favoriteCountries.length,
-      itemBuilder: (context, index) {
-        final country = _favoriteCountries[index];
-        return InkWell(
+      itemBuilder: (context, index) => _buildFavoriteItem(context, index),
+    );
+  }
+
+  Widget _buildFavoriteItem(BuildContext context, int index) {
+    final country = _favoriteCountries[index];
+    return InkWell(
           onTap: () {
             Navigator.push(
               context,
@@ -234,7 +253,5 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             ),
           ),
         );
-      },
-    );
   }
 }

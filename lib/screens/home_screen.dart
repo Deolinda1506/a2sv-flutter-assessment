@@ -6,6 +6,7 @@ import '../bloc/countries/countries_bloc.dart';
 import '../bloc/countries/countries_event.dart';
 import '../bloc/countries/countries_state.dart';
 import '../bloc/countries/countries_sort.dart';
+import '../utils/layout.dart';
 import '../widgets/country_list_item.dart';
 import '../widgets/shimmer_loader.dart';
 import 'country_detail_screen.dart';
@@ -173,36 +174,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     );
                   }
+                  final crossAxisCount = listGridCrossAxisCount(context);
                   return RefreshIndicator(
                     onRefresh: () async {
                       context.read<CountriesBloc>().add(const LoadCountries());
                     },
-                    child: ListView.builder(
-                      itemCount: state.countries.length,
-                      itemBuilder: (context, index) {
-                        final country = state.countries[index];
-                        return CountryListItem(
-                          country: country,
-                          isFavorite: state.isFavorite(country.cca2),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CountryDetailScreen(
-                                  cca2: country.cca2,
-                                  countryName: country.name,
-                                ),
-                              ),
-                            );
-                          },
-                          onFavoriteTap: () {
-                            context.read<CountriesBloc>().add(
-                                  ToggleFavorite(country.cca2),
-                                );
-                          },
-                        );
-                      },
-                    ),
+                    child: crossAxisCount == 1
+                        ? ListView.builder(
+                            itemCount: state.countries.length,
+                            itemBuilder: (context, index) =>
+                                _buildCountryItem(context, state, index),
+                          )
+                        : GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: crossAxisCount,
+                              childAspectRatio: 2.2,
+                              crossAxisSpacing: 8,
+                              mainAxisSpacing: 8,
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            itemCount: state.countries.length,
+                            itemBuilder: (context, index) =>
+                                _buildCountryItem(context, state, index),
+                          ),
                   );
                 }
                 return const SizedBox.shrink();
@@ -211,6 +206,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCountryItem(
+    BuildContext context,
+    CountriesLoaded state,
+    int index,
+  ) {
+    final country = state.countries[index];
+    return CountryListItem(
+      country: country,
+      isFavorite: state.isFavorite(country.cca2),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CountryDetailScreen(
+              cca2: country.cca2,
+              countryName: country.name,
+            ),
+          ),
+        );
+      },
+      onFavoriteTap: () {
+        context.read<CountriesBloc>().add(ToggleFavorite(country.cca2));
+      },
     );
   }
 }

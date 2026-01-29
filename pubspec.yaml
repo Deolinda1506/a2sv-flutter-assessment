@@ -46,7 +46,7 @@ dependencies:
   
   # Data Models
   equatable: ^2.0.5
-  
+
   # Loading States
   shimmer: ^3.0.0
   get_it: ^9.2.0

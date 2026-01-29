@@ -122,6 +122,20 @@ This app uses the [REST Countries API](https://restcountries.com/):
 - Favorites screen with capital display
 - Empty state when no favorites
 
+## Bonus Features Implemented
+
+- **Hero animation** – Flag animates from list to detail screen
+- **Dark mode** – Follows system theme
+- **Pull-to-refresh** – On Home screen list
+- **Search debouncing** – 300 ms to reduce API calls
+- **Data caching** – Country details cached in memory + SharedPreferences (offline fallback)
+- **Dependency injection** – `get_it` service locator
+- **Sorting** – Name (A–Z) and Population (high → low) on Home
+- **Tablet/Web support** – Responsive layout:
+  - **≥600 px**: Navigation rail instead of bottom bar; country list as 2-column grid
+  - **≥900 px**: 3-column grid for countries
+  - Favorites screen uses the same grid on larger widths
+
 ## Dependencies
 
 - `flutter_bloc: ^8.1.6` - State management
@@ -129,6 +143,7 @@ This app uses the [REST Countries API](https://restcountries.com/):
 - `shared_preferences: ^2.2.2` - Local storage
 - `equatable: ^2.0.5` - Value equality for models
 - `shimmer: ^3.0.0` - Loading shimmer effects
+- `get_it: ^9.2.0` - Service locator / dependency injection
 
 ## License
 

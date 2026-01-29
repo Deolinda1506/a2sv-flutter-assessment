@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../utils/layout.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
 
-/// Main screen with bottom navigation bar
+/// Main screen with bottom navigation (mobile) or rail (tablet/web)
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -19,8 +20,50 @@ class _MainScreenState extends State<MainScreen> {
     FavoritesScreen(key: _favoritesKey),
   ];
 
+  void _onTabTapped(int index) {
+    setState(() => _currentIndex = index);
+    if (index == 1 && _favoritesKey.currentState != null) {
+      _favoritesKey.currentState!.refresh();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final useRail = isTabletOrLarger(context);
+
+    if (useRail) {
+      return Scaffold(
+        body: Row(
+          children: [
+            NavigationRail(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: _onTabTapped,
+              labelType: NavigationRailLabelType.all,
+              destinations: const [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite_border),
+                  selectedIcon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+              ],
+            ),
+            const VerticalDivider(thickness: 1, width: 1),
+            Expanded(
+              child: IndexedStack(
+                index: _currentIndex,
+                children: _screens,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
@@ -28,15 +71,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          // Refresh favorites when switching to favorites tab
-          if (index == 1 && _favoritesKey.currentState != null) {
-            _favoritesKey.currentState!.refresh();
-          }
-        },
+        onTap: _onTabTapped,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
