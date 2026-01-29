@@ -26,22 +26,31 @@ class CountryListItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              // Flag (placeholder when no URL or load fails)
+              // Flag (placeholder when no URL or load fails; border for white/light flags)
               Hero(
                 tag: 'flag_${country.cca2}',
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: country.flagPng.isEmpty
-                      ? _buildNoFlagPlaceholder(context, 56, 40)
-                      : Image.network(
-                          country.flagPng,
-                          width: 56,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildNoFlagPlaceholder(context, 56, 40);
-                          },
-                        ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: country.flagPng.isEmpty
+                        ? _buildNoFlagPlaceholder(context, 56, 40)
+                        : Image.network(
+                            country.flagPng,
+                            width: 56,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return _buildNoFlagPlaceholder(context, 56, 40);
+                            },
+                          ),
+                  ),
                 ),
               ),
             const SizedBox(width: 16),

@@ -194,30 +194,39 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                // Flag (placeholder when no URL or load fails)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: country.flagPng.isEmpty
-                      ? Container(
-                          width: 56,
-                          height: 40,
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        )
-                      : Image.network(
-                          country.flagPng,
-                          width: 56,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 56,
-                              height: 40,
-                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                            );
-                          },
-                        ),
+                // Flag (placeholder when no URL or load fails; border for white/light flags)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(7),
+                    child: country.flagPng.isEmpty
+                        ? Container(
+                            width: 56,
+                            height: 40,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          )
+                        : Image.network(
+                            country.flagPng,
+                            width: 56,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 56,
+                                height: 40,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              );
+                            },
+                          ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 // Country name and capital

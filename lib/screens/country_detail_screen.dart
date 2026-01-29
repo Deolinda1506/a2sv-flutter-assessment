@@ -93,33 +93,42 @@ class CountryDetailScreen extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                       child: Hero(
                         tag: 'flag_${country.cca2}',
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            width: double.infinity,
-                            height: 250,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            child: country.flagPng.isEmpty
-                                ? Center(
-                                    child: Icon(
-                                      Icons.flag,
-                                      size: 64,
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(11),
+                            child: Container(
+                              width: double.infinity,
+                              height: 250,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: country.flagPng.isEmpty
+                                  ? Center(
+                                      child: Icon(
+                                        Icons.flag,
+                                        size: 64,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
+                                    )
+                                  : Image.network(
+                                      country.flagPng,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Center(
+                                          child: Icon(
+                                            Icons.flag,
+                                            size: 64,
+                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  )
-                                : Image.network(
-                                    country.flagPng,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Icon(
-                                          Icons.flag,
-                                          size: 64,
-                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                        ),
-                                      );
-                                    },
-                                  ),
+                            ),
                           ),
                         ),
                       ),
