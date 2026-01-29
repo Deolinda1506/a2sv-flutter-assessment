@@ -29,7 +29,7 @@ class CountriesLoaded extends CountriesState {
   const CountriesLoaded({
     required this.countries,
     required this.favoriteCountryCodes,
-    this.sortOption = CountriesSortOption.nameAsc,
+    this.sortOption = CountriesSortOption.populationDesc,
   });
 
   @override

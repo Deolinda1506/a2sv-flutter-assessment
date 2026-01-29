@@ -7,6 +7,7 @@ import '../models/country_details.dart';
 import '../services/countries_api_service.dart';
 import '../services/favorites_service.dart';
 import '../utils/layout.dart';
+import '../widgets/theme_mode_button.dart';
 import 'country_detail_screen.dart';
 
 /// Screen displaying list of favorite countries
@@ -90,6 +91,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
+        actions: const [ThemeModeButton()],
       ),
       body: _buildBody(),
     );

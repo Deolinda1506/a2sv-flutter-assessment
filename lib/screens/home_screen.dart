@@ -9,6 +9,7 @@ import '../bloc/countries/countries_sort.dart';
 import '../utils/layout.dart';
 import '../widgets/country_list_item.dart';
 import '../widgets/shimmer_loader.dart';
+import '../widgets/theme_mode_button.dart';
 import 'country_detail_screen.dart';
 
 /// Home screen displaying list of countries with search functionality
@@ -59,21 +60,58 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          PopupMenuButton<CountriesSortOption>(
-            icon: Icon(Icons.sort, color: Theme.of(context).colorScheme.onSurfaceVariant),
-            onSelected: (option) {
-              context.read<CountriesBloc>().add(SetCountriesSort(option));
+          const ThemeModeButton(),
+          BlocBuilder<CountriesBloc, CountriesState>(
+            buildWhen: (prev, curr) =>
+                prev is CountriesLoaded && curr is CountriesLoaded
+                    ? prev.sortOption != curr.sortOption
+                    : prev.runtimeType != curr.runtimeType,
+            builder: (context, state) {
+              final currentSort = state is CountriesLoaded
+                  ? state.sortOption
+                  : CountriesSortOption.populationDesc;
+              return PopupMenuButton<CountriesSortOption>(
+                icon: Icon(Icons.sort, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                onSelected: (option) {
+                  context.read<CountriesBloc>().add(SetCountriesSort(option));
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem<CountriesSortOption>(
+                    value: CountriesSortOption.nameAsc,
+                    child: Row(
+                      children: [
+                        if (currentSort == CountriesSortOption.nameAsc)
+                          Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+                        if (currentSort == CountriesSortOption.nameAsc) const SizedBox(width: 8),
+                        const Text('Name (A–Z)'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<CountriesSortOption>(
+                    value: CountriesSortOption.nameDesc,
+                    child: Row(
+                      children: [
+                        if (currentSort == CountriesSortOption.nameDesc)
+                          Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+                        if (currentSort == CountriesSortOption.nameDesc) const SizedBox(width: 8),
+                        const Text('Name (Z–A)'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem<CountriesSortOption>(
+                    value: CountriesSortOption.populationDesc,
+                    child: Row(
+                      children: [
+                        if (currentSort == CountriesSortOption.populationDesc)
+                          Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+                        if (currentSort == CountriesSortOption.populationDesc) const SizedBox(width: 8),
+                        const Text('Population (High → Low)'),
+                      ],
+                    ),
+                  ),
+                ],
+              );
             },
-            itemBuilder: (context) => const [
-              PopupMenuItem<CountriesSortOption>(
-                value: CountriesSortOption.nameAsc,
-                child: Text('Sort: Name (A–Z)'),
-              ),
-              PopupMenuItem<CountriesSortOption>(
-                value: CountriesSortOption.populationDesc,
-                child: Text('Sort: Population (High → Low)'),
-              ),
-            ],
           ),
         ],
       ),

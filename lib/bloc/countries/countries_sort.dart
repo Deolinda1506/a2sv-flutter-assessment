@@ -1,5 +1,6 @@
 enum CountriesSortOption {
-  nameAsc,
+  nameAsc,   // A–Z
+  nameDesc,  // Z–A
   populationDesc,
 }
 

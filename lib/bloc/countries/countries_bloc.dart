@@ -10,7 +10,7 @@ import 'countries_state.dart';
 class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   final CountriesApiService _apiService;
   final FavoritesService _favoritesService;
-  CountriesSortOption _sortOption = CountriesSortOption.nameAsc;
+  CountriesSortOption _sortOption = CountriesSortOption.populationDesc;
 
   CountriesBloc({
     required CountriesApiService apiService,
@@ -30,6 +30,9 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     switch (_sortOption) {
       case CountriesSortOption.nameAsc:
         sorted.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case CountriesSortOption.nameDesc:
+        sorted.sort((a, b) => b.name.compareTo(a.name));
         break;
       case CountriesSortOption.populationDesc:
         sorted.sort((a, b) => b.population.compareTo(a.population));
