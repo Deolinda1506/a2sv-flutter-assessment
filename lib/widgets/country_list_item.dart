@@ -26,27 +26,24 @@ class CountryListItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
-              // Flag
+              // Flag (placeholder when no URL or load fails)
               Hero(
-              tag: 'flag_${country.cca2}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  country.flagPng,
-                  width: 56,
-                  height: 40,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 56,
-                      height: 40,
-                      color: Colors.grey[300],
-                      child: const Icon(Icons.flag, size: 24),
-                    );
-                  },
+                tag: 'flag_${country.cca2}',
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: country.flagPng.isEmpty
+                      ? _buildNoFlagPlaceholder(context, 56, 40)
+                      : Image.network(
+                          country.flagPng,
+                          width: 56,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildNoFlagPlaceholder(context, 56, 40);
+                          },
+                        ),
                 ),
               ),
-            ),
             const SizedBox(width: 16),
             // Country name and population
             Expanded(
@@ -55,10 +52,10 @@ class CountryListItem extends StatelessWidget {
                 children: [
                   Text(
                     country.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -66,7 +63,7 @@ class CountryListItem extends StatelessWidget {
                     'Population: ${country.formattedPopulation}',
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[600],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -82,7 +79,7 @@ class CountryListItem extends StatelessWidget {
                 onPressed: onFavoriteTap,
                 icon: Icon(
                   isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : Colors.grey,
+                  color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -90,6 +87,16 @@ class CountryListItem extends StatelessWidget {
         ),
       ),
     ),
+    );
+  }
+
+  Widget _buildNoFlagPlaceholder(BuildContext context, double width, double height) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      width: width,
+      height: height,
+      color: colorScheme.surfaceContainerHighest,
+      child: Icon(Icons.flag, size: 24, color: colorScheme.onSurfaceVariant),
     );
   }
 }

@@ -76,6 +76,8 @@ These choices support automated testing, accessibility (Semantics on key actions
 - Android Studio / Xcode (for mobile development)
 - An internet connection (for API calls)
 
+**Environment variables:** None required. The app uses the public REST Countries API.
+
 ### Installation
 
 1. **Clone the repository**
@@ -103,6 +105,12 @@ flutter build apk --release
 ```
 
 The APK will be located at: `build/app/outputs/flutter-apk/app-release.apk`
+
+### Before submission (best practices)
+
+- **No secrets:** Keep the project as-is: no `.env` with keys, no hardcoded secrets. The app uses the public REST Countries API only.
+- **After adding a dependency:** Run `flutter pub get` and then `flutter run` or `flutter build apk --release`, and fix any errors before considering the project done.
+- **After regenerating code:** If you run `dart run build_runner build --delete-conflicting-outputs`, run `flutter test` and a quick manual test afterward. Don’t commit half-regenerated code.
 
 ## API Usage
 

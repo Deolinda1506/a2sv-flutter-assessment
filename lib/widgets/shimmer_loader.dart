@@ -7,9 +7,12 @@ class CountryListShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[600]! : Colors.grey[100]!;
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: baseColor,
+      highlightColor: highlightColor,
       child: ListView.builder(
         itemCount: 10,
         itemBuilder: (context, index) {
@@ -22,7 +25,7 @@ class CountryListShimmer extends StatelessWidget {
                   width: 56,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: baseColor,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -35,13 +38,13 @@ class CountryListShimmer extends StatelessWidget {
                       Container(
                         width: double.infinity,
                         height: 16,
-                        color: Colors.white,
+                        color: baseColor,
                       ),
                       const SizedBox(height: 8),
                       Container(
                         width: 120,
                         height: 14,
-                        color: Colors.white,
+                        color: baseColor,
                       ),
                     ],
                   ),
@@ -51,7 +54,7 @@ class CountryListShimmer extends StatelessWidget {
                 Container(
                   width: 24,
                   height: 24,
-                  color: Colors.white,
+                  color: baseColor,
                 ),
               ],
             ),

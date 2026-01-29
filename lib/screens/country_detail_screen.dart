@@ -25,18 +25,17 @@ class CountryDetailScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.onSurface),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(
             countryName,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 20,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
-          elevation: 0,
-          backgroundColor: Colors.white,
         ),
         body: BlocBuilder<CountryDetailBloc, CountryDetailState>(
           builder: (context, state) {
@@ -52,7 +51,7 @@ class CountryDetailScreen extends StatelessWidget {
                     Icon(
                       Icons.error_outline,
                       size: 64,
-                      color: Colors.grey[400],
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     const SizedBox(height: 16),
                     Padding(
@@ -61,7 +60,7 @@ class CountryDetailScreen extends StatelessWidget {
                         state.message,
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -89,27 +88,39 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image
-                    Hero(
-                      tag: 'flag_${country.cca2}',
-                      child: Container(
-                        width: double.infinity,
-                        height: 250,
-                        decoration: BoxDecoration(
-                          color: Colors.teal[100],
-                        ),
-                        child: Image.network(
-                          country.flagPng,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Center(
-                              child: Icon(
-                                Icons.flag,
-                                size: 64,
-                                color: Colors.grey[400],
-                              ),
-                            );
-                          },
+                    // Flag image (large, rounded corners, teal background per Figma)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Hero(
+                        tag: 'flag_${country.cca2}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            width: double.infinity,
+                            height: 250,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: country.flagPng.isEmpty
+                                ? Center(
+                                    child: Icon(
+                                      Icons.flag,
+                                      size: 64,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    ),
+                                  )
+                                : Image.network(
+                                    country.flagPng,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Icon(
+                                          Icons.flag,
+                                          size: 64,
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                          ),
                         ),
                       ),
                     ),
@@ -119,28 +130,30 @@ class CountryDetailScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Key Statistics',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _buildStatRow('Area', country.formattedArea),
+                          _buildStatRow(context, 'Area', country.formattedArea),
                           const SizedBox(height: 12),
-                          _buildStatRow('Population', country.formattedPopulation),
+                          _buildStatRow(context, 'Population', country.formattedPopulation),
                           const SizedBox(height: 12),
-                          _buildStatRow('Region', country.region),
+                          _buildStatRow(context, 'Region', country.region),
                           const SizedBox(height: 12),
-                          _buildStatRow('Sub Region', country.subregion),
+                          _buildStatRow(context, 'Sub Region', country.subregion),
                           const SizedBox(height: 32),
                           // Timezone section
-                          const Text(
+                          Text(
                             'Timezone',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -154,13 +167,14 @@ class CountryDetailScreen extends StatelessWidget {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(color: Theme.of(context).colorScheme.outline),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   timezone,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 14,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               );
@@ -180,26 +194,28 @@ class CountryDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
+  Widget _buildStatRow(BuildContext context, String label, String value) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          width: 100,
+        Expanded(
           child: Text(
             label,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey[600],
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ),
         Expanded(
           child: Text(
             value,
-            style: const TextStyle(
+            textAlign: TextAlign.right,
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
+              color: colorScheme.onSurface,
             ),
           ),
         ),

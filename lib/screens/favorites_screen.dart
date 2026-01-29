@@ -82,16 +82,14 @@ class FavoritesScreenState extends State<FavoritesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Favorites',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 24,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.white,
       ),
       body: _buildBody(),
     );
@@ -112,14 +110,14 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             Icon(
               Icons.error_outline,
               size: 64,
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
             Text(
               _error!,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -142,14 +140,14 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             Icon(
               Icons.favorite_border,
               size: 64,
-              color: Colors.grey[400],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 16),
             Text(
               'No favorites yet.\nAdd countries to favorites from the Home screen.',
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
             ),
@@ -196,23 +194,30 @@ class FavoritesScreenState extends State<FavoritesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                // Flag
+                // Flag (placeholder when no URL or load fails)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    country.flagPng,
-                    width: 56,
-                    height: 40,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 56,
-                        height: 40,
-                        color: Colors.grey[300],
-                        child: const Icon(Icons.flag, size: 24),
-                      );
-                    },
-                  ),
+                  child: country.flagPng.isEmpty
+                      ? Container(
+                          width: 56,
+                          height: 40,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        )
+                      : Image.network(
+                          country.flagPng,
+                          width: 56,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 56,
+                              height: 40,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            );
+                          },
+                        ),
                 ),
                 const SizedBox(width: 16),
                 // Country name and capital
@@ -222,10 +227,10 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                     children: [
                       Text(
                         country.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -235,7 +240,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                             : 'Population: ${country.formattedPopulation}',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
