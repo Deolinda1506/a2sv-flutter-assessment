@@ -1,13 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../models/country_summary.dart';
 import '../../services/countries_api_service.dart';
 import '../../services/favorites_service.dart';
 import 'countries_event.dart';
+import 'countries_sort.dart';
 import 'countries_state.dart';
 
 /// BLoC for managing countries list state
 class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   final CountriesApiService _apiService;
   final FavoritesService _favoritesService;
+  CountriesSortOption _sortOption = CountriesSortOption.nameAsc;
 
   CountriesBloc({
     required CountriesApiService apiService,
@@ -19,6 +22,20 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     on<SearchCountries>(_onSearchCountries);
     on<ToggleFavorite>(_onToggleFavorite);
     on<RefreshFavorites>(_onRefreshFavorites);
+    on<SetCountriesSort>(_onSetCountriesSort);
+  }
+
+  List<CountrySummary> _applySort(List<CountrySummary> countries) {
+    final sorted = [...countries];
+    switch (_sortOption) {
+      case CountriesSortOption.nameAsc:
+        sorted.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case CountriesSortOption.populationDesc:
+        sorted.sort((a, b) => b.population.compareTo(a.population));
+        break;
+    }
+    return sorted;
   }
 
   Future<void> _onLoadCountries(
@@ -27,11 +44,12 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   ) async {
     emit(const CountriesLoading());
     try {
-      final countries = await _apiService.getAllCountries();
+      final countries = _applySort(await _apiService.getAllCountries());
       final favoriteCodes = await _favoritesService.getFavoriteCountryCodes();
       emit(CountriesLoaded(
         countries: countries,
         favoriteCountryCodes: favoriteCodes,
+        sortOption: _sortOption,
       ));
     } catch (e) {
       emit(CountriesError(e.toString()));
@@ -49,11 +67,13 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
 
     emit(const CountriesLoading());
     try {
-      final countries = await _apiService.searchCountriesByName(event.query);
+      final countries =
+          _applySort(await _apiService.searchCountriesByName(event.query));
       final favoriteCodes = await _favoritesService.getFavoriteCountryCodes();
       emit(CountriesLoaded(
         countries: countries,
         favoriteCountryCodes: favoriteCodes,
+        sortOption: _sortOption,
       ));
     } catch (e) {
       emit(CountriesError(e.toString()));
@@ -71,6 +91,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       emit(CountriesLoaded(
         countries: currentState.countries,
         favoriteCountryCodes: favoriteCodes,
+        sortOption: currentState.sortOption,
       ));
     }
   }
@@ -85,7 +106,25 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       emit(CountriesLoaded(
         countries: currentState.countries,
         favoriteCountryCodes: favoriteCodes,
+        sortOption: currentState.sortOption,
       ));
+    }
+  }
+
+  Future<void> _onSetCountriesSort(
+    SetCountriesSort event,
+    Emitter<CountriesState> emit,
+  ) async {
+    _sortOption = event.sortOption;
+    if (state is CountriesLoaded) {
+      final currentState = state as CountriesLoaded;
+      emit(CountriesLoaded(
+        countries: _applySort(currentState.countries),
+        favoriteCountryCodes: currentState.favoriteCountryCodes,
+        sortOption: _sortOption,
+      ));
+    } else {
+      add(const LoadCountries());
     }
   }
 }

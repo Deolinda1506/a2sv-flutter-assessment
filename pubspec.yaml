@@ -49,6 +49,7 @@ dependencies:
   
   # Loading States
   shimmer: ^3.0.0
+  get_it: ^9.2.0
 
 dev_dependencies:
   flutter_test:

@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'screens/main_screen.dart';
 import 'bloc/countries/countries_bloc.dart';
 import 'bloc/countries/countries_event.dart';
-import 'services/countries_api_service.dart';
-import 'services/favorites_service.dart';
+import 'di/service_locator.dart';
 
 void main() {
+  setupServiceLocator();
   runApp(const MyApp());
 }
 
@@ -15,9 +15,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize services
-    final apiService = CountriesApiService();
-    final favoritesService = FavoritesService();
+    // Ensure service locator is available (useful for tests that pump MyApp directly).
+    setupServiceLocator();
 
     return MaterialApp(
       title: 'Countries App',
@@ -25,12 +24,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
-        scaffoldBackgroundColor: Colors.white,
       ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.system,
       home: BlocProvider(
         create: (context) => CountriesBloc(
-          apiService: apiService,
-          favoritesService: favoritesService,
+          apiService: getIt(),
+          favoritesService: getIt(),
         )..add(const LoadCountries()),
         child: const MainScreen(),
       ),

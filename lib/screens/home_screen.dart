@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/countries/countries_bloc.dart';
 import '../bloc/countries/countries_event.dart';
 import '../bloc/countries/countries_state.dart';
+import '../bloc/countries/countries_sort.dart';
 import '../widgets/country_list_item.dart';
 import '../widgets/shimmer_loader.dart';
 import 'country_detail_screen.dart';
@@ -57,6 +58,24 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
+        actions: [
+          PopupMenuButton<CountriesSortOption>(
+            icon: const Icon(Icons.sort),
+            onSelected: (option) {
+              context.read<CountriesBloc>().add(SetCountriesSort(option));
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem<CountriesSortOption>(
+                value: CountriesSortOption.nameAsc,
+                child: Text('Sort: Name (A–Z)'),
+              ),
+              PopupMenuItem<CountriesSortOption>(
+                value: CountriesSortOption.populationDesc,
+                child: Text('Sort: Population (High → Low)'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [

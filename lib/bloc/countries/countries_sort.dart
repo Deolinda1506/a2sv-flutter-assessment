@@ -1,0 +1,5 @@
+enum CountriesSortOption {
+  nameAsc,
+  populationDesc,
+}
+

@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../models/country_details.dart';
 import '../models/country_summary.dart';
 
@@ -6,6 +8,8 @@ import '../models/country_summary.dart';
 class CountriesApiService {
   final Dio _dio;
   static const String _baseUrl = 'https://restcountries.com/v3.1';
+  static const String _detailsCachePrefix = 'country_details_cache_';
+  final Map<String, CountryDetails> _detailsMemoryCache = {};
 
   CountriesApiService({Dio? dio}) : _dio = dio ?? Dio();
 
@@ -59,6 +63,9 @@ class CountriesApiService {
   /// Fetch detailed country data by cca2 code
   /// Returns: name, flags, population, capital, region, subregion, area, timezones
   Future<CountryDetails> getCountryDetails(String cca2) async {
+    final cached = _detailsMemoryCache[cca2];
+    if (cached != null) return cached;
+
     try {
       final response = await _dio.get(
         '$_baseUrl/alpha/$cca2',
@@ -69,11 +76,45 @@ class CountriesApiService {
       );
 
       if (response.statusCode == 200 && response.data is Map) {
-        return CountryDetails.fromJson(response.data as Map<String, dynamic>);
+        final jsonMap = response.data as Map<String, dynamic>;
+        final details = CountryDetails.fromJson(jsonMap);
+        _detailsMemoryCache[cca2] = details;
+        await _cacheDetailsJson(cca2, jsonMap);
+        return details;
       }
       throw Exception('Failed to load country details');
     } on DioException catch (e) {
+      final fromDisk = await _tryLoadCachedDetails(cca2);
+      if (fromDisk != null) {
+        _detailsMemoryCache[cca2] = fromDisk;
+        return fromDisk;
+      }
       throw _handleError(e);
+    }
+  }
+
+  Future<void> _cacheDetailsJson(String cca2, Map<String, dynamic> jsonMap) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+        '$_detailsCachePrefix$cca2',
+        json.encode(jsonMap),
+      );
+    } catch (_) {
+      // best-effort cache
+    }
+  }
+
+  Future<CountryDetails?> _tryLoadCachedDetails(String cca2) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('$_detailsCachePrefix$cca2');
+      if (raw == null) return null;
+      final decoded = json.decode(raw);
+      if (decoded is! Map) return null;
+      return CountryDetails.fromJson(decoded.cast<String, dynamic>());
+    } catch (_) {
+      return null;
     }
   }
 

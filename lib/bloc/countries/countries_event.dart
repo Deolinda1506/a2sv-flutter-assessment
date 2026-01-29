@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'countries_sort.dart';
 
 /// Events for the countries list
 abstract class CountriesEvent extends Equatable {
@@ -36,4 +37,14 @@ class ToggleFavorite extends CountriesEvent {
 /// Refresh favorites
 class RefreshFavorites extends CountriesEvent {
   const RefreshFavorites();
+}
+
+/// Change sorting for the countries list
+class SetCountriesSort extends CountriesEvent {
+  final CountriesSortOption sortOption;
+
+  const SetCountriesSort(this.sortOption);
+
+  @override
+  List<Object?> get props => [sortOption];
 }

@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/countries/countries_bloc.dart';
 import '../bloc/countries/countries_event.dart';
+import '../di/service_locator.dart';
+import '../models/country_details.dart';
 import '../services/countries_api_service.dart';
 import '../services/favorites_service.dart';
-import '../models/country_details.dart';
 import 'country_detail_screen.dart';
 
 /// Screen displaying list of favorite countries
@@ -16,8 +17,8 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class FavoritesScreenState extends State<FavoritesScreen> {
-  final FavoritesService _favoritesService = FavoritesService();
-  final CountriesApiService _apiService = CountriesApiService();
+  final _favoritesService = getIt.get<FavoritesService>();
+  final _apiService = getIt.get<CountriesApiService>();
   List<CountryDetails> _favoriteCountries = [];
   bool _isLoading = true;
   String? _error;

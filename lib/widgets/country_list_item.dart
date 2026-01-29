@@ -25,21 +25,24 @@ class CountryListItem extends StatelessWidget {
         child: Row(
           children: [
             // Flag
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(
-                country.flagPng,
-                width: 56,
-                height: 40,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 56,
-                    height: 40,
-                    color: Colors.grey[300],
-                    child: const Icon(Icons.flag, size: 24),
-                  );
-                },
+            Hero(
+              tag: 'flag_${country.cca2}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  country.flagPng,
+                  width: 56,
+                  height: 40,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 56,
+                      height: 40,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.flag, size: 24),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(width: 16),

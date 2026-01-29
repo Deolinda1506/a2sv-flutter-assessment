@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/country_detail/country_detail_bloc.dart';
 import '../bloc/country_detail/country_detail_event.dart';
 import '../bloc/country_detail/country_detail_state.dart';
-import '../services/countries_api_service.dart';
+import '../di/service_locator.dart';
 
 /// Screen displaying detailed information about a country
 class CountryDetailScreen extends StatelessWidget {
@@ -20,7 +20,7 @@ class CountryDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CountryDetailBloc(
-        apiService: CountriesApiService(),
+        apiService: getIt(),
       )..add(LoadCountryDetail(cca2)),
       child: Scaffold(
         appBar: AppBar(
@@ -86,24 +86,27 @@ class CountryDetailScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Flag image
-                    Container(
-                      width: double.infinity,
-                      height: 250,
-                      decoration: BoxDecoration(
-                        color: Colors.teal[100],
-                      ),
-                      child: Image.network(
-                        country.flagPng,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Center(
-                            child: Icon(
-                              Icons.flag,
-                              size: 64,
-                              color: Colors.grey[400],
-                            ),
-                          );
-                        },
+                    Hero(
+                      tag: 'flag_${country.cca2}',
+                      child: Container(
+                        width: double.infinity,
+                        height: 250,
+                        decoration: BoxDecoration(
+                          color: Colors.teal[100],
+                        ),
+                        child: Image.network(
+                          country.flagPng,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Icon(
+                                Icons.flag,
+                                size: 64,
+                                color: Colors.grey[400],
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                     // Key Statistics

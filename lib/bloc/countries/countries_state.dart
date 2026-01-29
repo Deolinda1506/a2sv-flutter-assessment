@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../models/country_summary.dart';
+import 'countries_sort.dart';
 
 /// States for the countries list
 abstract class CountriesState extends Equatable {
@@ -23,14 +24,16 @@ class CountriesLoading extends CountriesState {
 class CountriesLoaded extends CountriesState {
   final List<CountrySummary> countries;
   final Set<String> favoriteCountryCodes;
+  final CountriesSortOption sortOption;
 
   const CountriesLoaded({
     required this.countries,
     required this.favoriteCountryCodes,
+    this.sortOption = CountriesSortOption.nameAsc,
   });
 
   @override
-  List<Object?> get props => [countries, favoriteCountryCodes];
+  List<Object?> get props => [countries, favoriteCountryCodes, sortOption];
 
   /// Check if a country is favorited
   bool isFavorite(String cca2) {
