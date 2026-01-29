@@ -1,30 +1,49 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'country_summary.freezed.dart';
+part 'country_summary.g.dart';
+
+/// Nested DTO for API name object
+@Freezed(fromJson: true)
+class NameDto with _$NameDto {
+  const factory NameDto({
+    @JsonKey(name: 'common') @Default('') String common,
+  }) = _NameDto;
+
+  factory NameDto.fromJson(Map<String, dynamic> json) =>
+      _$NameDtoFromJson(json);
+}
+
+/// Nested DTO for API flags object
+@Freezed(fromJson: true)
+class FlagsDto with _$FlagsDto {
+  const factory FlagsDto({
+    @Default('') String png,
+    @Default('') String svg,
+  }) = _FlagsDto;
+
+  factory FlagsDto.fromJson(Map<String, dynamic> json) =>
+      _$FlagsDtoFromJson(json);
+}
 
 /// Data model for country summary information used in lists
-class CountrySummary extends Equatable {
-  final String name;
-  final String flagPng;
-  final String flagSvg;
-  final int population;
-  final String cca2;
+@Freezed(fromJson: true)
+class CountrySummary with _$CountrySummary {
+  const CountrySummary._();
 
-  const CountrySummary({
-    required this.name,
-    required this.flagPng,
-    required this.flagSvg,
-    required this.population,
-    required this.cca2,
-  });
+  const factory CountrySummary({
+    @JsonKey(name: 'name') required NameDto nameDto,
+    @JsonKey(name: 'flags') required FlagsDto flagsDto,
+    @Default(0) int population,
+    @Default('') String cca2,
+  }) = _CountrySummary;
 
-  factory CountrySummary.fromJson(Map<String, dynamic> json) {
-    return CountrySummary(
-      name: json['name']?['common'] ?? '',
-      flagPng: json['flags']?['png'] ?? '',
-      flagSvg: json['flags']?['svg'] ?? '',
-      population: json['population'] ?? 0,
-      cca2: json['cca2'] ?? '',
-    );
-  }
+  factory CountrySummary.fromJson(Map<String, dynamic> json) =>
+      _$CountrySummaryFromJson(json);
+
+  String get name => nameDto.common;
+  String get flagPng => flagsDto.png;
+  String get flagSvg => flagsDto.svg;
 
   /// Formats population as a readable string (e.g., "47.1M", "1.38B")
   String get formattedPopulation {
@@ -37,7 +56,4 @@ class CountrySummary extends Equatable {
     }
     return population.toString();
   }
-
-  @override
-  List<Object?> get props => [name, flagPng, flagSvg, population, cca2];
 }

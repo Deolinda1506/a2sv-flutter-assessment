@@ -135,15 +135,21 @@ This app uses the [REST Countries API](https://restcountries.com/):
   - **≥600 px**: Navigation rail instead of bottom bar; country list as 2-column grid
   - **≥900 px**: 3-column grid for countries
   - Favorites screen uses the same grid on larger widths
+- **Code generation** – `freezed` for immutable data models and `json_serializable` for JSON parsing (`CountrySummary`, `CountryDetails`, plus nested `NameDto`/`FlagsDto` for API shape). Regenerate with: `dart run build_runner build --delete-conflicting-outputs`
 
 ## Dependencies
 
 - `flutter_bloc: ^8.1.6` - State management
 - `dio: ^5.4.0` - HTTP client
 - `shared_preferences: ^2.2.2` - Local storage
-- `equatable: ^2.0.5` - Value equality for models
+- `equatable: ^2.0.5` - Value equality (BLoC states)
+- `freezed_annotation` / `json_annotation` - Data models and JSON
 - `shimmer: ^3.0.0` - Loading shimmer effects
 - `get_it: ^9.2.0` - Service locator / dependency injection
+
+### Dev
+
+- `build_runner`, `freezed`, `json_serializable` - Code generation for models
 
 ## License
 
