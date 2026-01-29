@@ -35,23 +35,34 @@ lib/
 └── main.dart               # App entry point
 ```
 
+## Design Decisions
+
+The app is built around a few deliberate choices to balance clarity, performance, and maintainability:
+
+- **BLoC over other state management**: Keeps business logic out of the UI and makes flows (load → loading/loaded/error) explicit and testable. Events and states are plain Dart classes, so unit testing the bloc does not depend on the widget tree.
+- **Two-step API usage**: List screens request only `name`, `flags`, `population`, and `cca2` to keep payloads small and fast. Full details (capital, region, area, timezones) are fetched only when the user opens a country, reducing data transfer and improving perceived performance.
+- **get_it as service locator**: Services (API, favorites) and their dependencies are registered in one place (`di/service_locator.dart`). Screens and blocs get them via `getIt()`, which simplifies testing with fakes and keeps constructors consistent.
+- **Freezed + json_serializable for models**: Immutable DTOs with generated `copyWith`, `==`, and JSON parsing keep the domain layer consistent and reduce boilerplate and parsing bugs.
+
+These choices support automated testing, accessibility (Semantics on key actions), and responsive layout (breakpoints, rail, grid) without over-engineering for the scope.
+
 ## Technology & Architecture Choices
 
 ### State Management: BLoC Pattern
-- **Why BLoC?**: Provides clear separation of business logic from UI, making the code testable and maintainable
-- **Implementation**: Used `flutter_bloc` package with Cubit pattern for simpler state management
+- **Why BLoC?**: Clear separation of business logic from UI; testable and maintainable
+- **Implementation**: `flutter_bloc` with distinct events and states per feature
 
 ### HTTP Client: Dio
-- **Why Dio?**: More features than the standard `http` package, including interceptors, better error handling, and request/response transformation
-- **Implementation**: Custom `CountriesApiService` with proper error handling
+- **Why Dio?**: Interceptors, better error handling, and request/response transformation
+- **Implementation**: `CountriesApiService` with loading/success/error handling
 
 ### Local Storage: SharedPreferences
-- **Why SharedPreferences?**: Simple key-value storage perfect for storing favorite country codes
-- **Implementation**: `FavoritesService` handles all favorite operations with persistence
+- **Why SharedPreferences?**: Simple key-value storage for favorite country codes
+- **Implementation**: `FavoritesService` for add/remove/toggle with persistence
 
-### Data Models: Equatable
-- **Why Equatable?**: Provides value equality for immutable data models, essential for BLoC state comparisons
-- **Implementation**: All models extend `Equatable` for proper state management
+### Data Models: Freezed + json_serializable
+- **Why?**: Immutable models, generated equality and JSON parsing, less boilerplate
+- **Implementation**: `CountrySummary`, `CountryDetails`, nested DTOs; regenerate with `build_runner`
 
 ### Two-Step Data Fetching Strategy
 - **Step 1**: Fetch minimal data (name, flags, population, cca2) for lists to improve performance
@@ -98,6 +109,17 @@ The APK will be located at: `build/app/outputs/flutter-apk/app-release.apk`
 This app uses the [REST Countries API](https://restcountries.com/):
 - Base URL: `https://restcountries.com/v3.1`
 - All API calls are made using the two-step fetching strategy as specified in the requirements
+
+## Testing
+
+- **Unit tests**: `CountriesBloc` (load, search, sort, error) and `FavoritesService` (add, remove, toggle) with fakes/mocks
+- **Widget test**: App boots and shows Home tab
+- Run: `flutter test`
+
+## Accessibility
+
+- **Semantics** on main actions: search field (label + hint), country list items (name + population + “double tap to view details”), favorite button (“Add/Remove … from favorites”), detail Retry button
+- Supports screen readers and focus order
 
 ## User Stories Implemented
 

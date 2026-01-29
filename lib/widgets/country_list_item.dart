@@ -18,14 +18,16 @@ class CountryListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            // Flag
-            Hero(
+    return Semantics(
+      label: '${country.name}, Population: ${country.formattedPopulation}. Double tap to view details.',
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              // Flag
+              Hero(
               tag: 'flag_${country.cca2}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
@@ -71,16 +73,23 @@ class CountryListItem extends StatelessWidget {
               ),
             ),
             // Favorite icon
-            IconButton(
-              onPressed: onFavoriteTap,
-              icon: Icon(
-                isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: isFavorite ? Colors.red : Colors.grey,
+            Semantics(
+              label: isFavorite
+                  ? 'Remove ${country.name} from favorites'
+                  : 'Add ${country.name} to favorites',
+              button: true,
+              child: IconButton(
+                onPressed: onFavoriteTap,
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.red : Colors.grey,
+                ),
               ),
             ),
           ],
         ),
       ),
+    ),
     );
   }
 }

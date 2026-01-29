@@ -67,14 +67,18 @@ class CountryDetailScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        context.read<CountryDetailBloc>().add(
-                              RetryLoadCountryDetail(cca2),
-                            );
-                      },
-                      icon: const Icon(Icons.refresh),
-                      label: const Text('Retry'),
+                    Semantics(
+                      label: 'Retry loading country details',
+                      button: true,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          context.read<CountryDetailBloc>().add(
+                                RetryLoadCountryDetail(cca2),
+                              );
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Retry'),
+                      ),
                     ),
                   ],
                 ),
