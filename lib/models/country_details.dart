@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 /// Data model for detailed country information used in detail screen
 class CountryDetails extends Equatable {
+  final String cca2;
   final String name;
   final String flagPng;
   final String flagSvg;
@@ -13,6 +14,7 @@ class CountryDetails extends Equatable {
   final List<String> timezones;
 
   const CountryDetails({
+    required this.cca2,
     required this.name,
     required this.flagPng,
     required this.flagSvg,
@@ -29,6 +31,7 @@ class CountryDetails extends Equatable {
     final timezones = json['timezones'] as List<dynamic>?;
 
     return CountryDetails(
+      cca2: json['cca2'] ?? '',
       name: json['name']?['common'] ?? '',
       flagPng: json['flags']?['png'] ?? '',
       flagSvg: json['flags']?['svg'] ?? '',
@@ -63,6 +66,7 @@ class CountryDetails extends Equatable {
 
   @override
   List<Object?> get props => [
+        cca2,
         name,
         flagPng,
         flagSvg,

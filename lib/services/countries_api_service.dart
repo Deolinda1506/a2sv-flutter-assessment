@@ -63,7 +63,8 @@ class CountriesApiService {
       final response = await _dio.get(
         '$_baseUrl/alpha/$cca2',
         queryParameters: {
-          'fields': 'name,flags,population,capital,region,subregion,area,timezones',
+          'fields':
+              'cca2,name,flags,population,capital,region,subregion,area,timezones',
         },
       );
 

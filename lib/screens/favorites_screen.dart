@@ -4,7 +4,7 @@ import '../bloc/countries/countries_bloc.dart';
 import '../bloc/countries/countries_event.dart';
 import '../services/countries_api_service.dart';
 import '../services/favorites_service.dart';
-import '../models/country_summary.dart';
+import '../models/country_details.dart';
 import 'country_detail_screen.dart';
 
 /// Screen displaying list of favorite countries
@@ -18,8 +18,7 @@ class FavoritesScreen extends StatefulWidget {
 class FavoritesScreenState extends State<FavoritesScreen> {
   final FavoritesService _favoritesService = FavoritesService();
   final CountriesApiService _apiService = CountriesApiService();
-  Map<String, String?> _favoriteCapitals = {}; // cca2 -> capital
-  List<CountrySummary> _favoriteCountries = [];
+  List<CountryDetails> _favoriteCountries = [];
   bool _isLoading = true;
   String? _error;
 
@@ -40,25 +39,23 @@ class FavoritesScreenState extends State<FavoritesScreen> {
     });
 
     try {
-      // Get all countries first
-      final allCountries = await _apiService.getAllCountries();
-      // Get favorite countries
-      final favorites = await _favoritesService.getFavoriteCountries(allCountries);
-      
-      // Fetch capitals for favorite countries
-      final Map<String, String?> capitals = {};
-      for (final country in favorites) {
-        try {
-          final details = await _apiService.getCountryDetails(country.cca2);
-          capitals[country.cca2] = details.capital;
-        } catch (e) {
-          capitals[country.cca2] = null;
-        }
+      final favoriteCodes = await _favoritesService.getFavoriteCountryCodes();
+
+      if (favoriteCodes.isEmpty) {
+        setState(() {
+          _favoriteCountries = [];
+          _isLoading = false;
+        });
+        return;
       }
-      
+
+      // Fetch details in parallel (includes capital)
+      final favorites = await Future.wait(
+        favoriteCodes.map(_apiService.getCountryDetails),
+      );
+
       setState(() {
         _favoriteCountries = favorites;
-        _favoriteCapitals = capitals;
         _isLoading = false;
       });
     } catch (e) {
@@ -213,8 +210,8 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _favoriteCapitals[country.cca2] != null
-                            ? 'Capital: ${_favoriteCapitals[country.cca2]}'
+                        country.capital != null && country.capital!.isNotEmpty
+                            ? 'Capital: ${country.capital}'
                             : 'Population: ${country.formattedPopulation}',
                         style: TextStyle(
                           fontSize: 14,
