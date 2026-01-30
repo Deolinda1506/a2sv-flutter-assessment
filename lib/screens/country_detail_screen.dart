@@ -91,16 +91,19 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image (full width, high quality, no box)
+                    // Flag image (full width, high quality). Light tint in light mode so white flags (e.g. Afghanistan) are visible.
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                       child: Hero(
                         tag: 'flag_${country.cca2}',
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: SizedBox(
+                          child: Container(
                             width: double.infinity,
                             height: _detailFlagHeight(context),
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? Colors.grey.shade100
+                                : Colors.transparent,
                             child: _buildDetailFlag(context, country),
                           ),
                         ),
