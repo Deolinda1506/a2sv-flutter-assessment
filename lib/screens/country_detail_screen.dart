@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../bloc/country_detail/country_detail_bloc.dart';
 import '../bloc/country_detail/country_detail_event.dart';
 import '../bloc/country_detail/country_detail_state.dart';
 import '../di/service_locator.dart';
+import '../models/country_details.dart';
 
 /// Screen displaying detailed information about a country
 class CountryDetailScreen extends StatelessWidget {
@@ -107,27 +109,7 @@ class CountryDetailScreen extends StatelessWidget {
                               width: double.infinity,
                               height: 250,
                               color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: country.flagPng.isEmpty
-                                  ? Center(
-                                      child: Icon(
-                                        Icons.flag,
-                                        size: 64,
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      ),
-                                    )
-                                  : Image.network(
-                                      country.flagPng,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Center(
-                                          child: Icon(
-                                            Icons.flag,
-                                            size: 64,
-                                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                          ),
-                                        );
-                                      },
-                                    ),
+                              child: _buildDetailFlag(context, country),
                             ),
                           ),
                         ),
@@ -200,6 +182,52 @@ class CountryDetailScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+
+  /// Use SVG when available for sharp scaling at large size; fallback to PNG with high filter quality.
+  Widget _buildDetailFlag(BuildContext context, CountryDetails country) {
+    final noFlag = country.flagPng.isEmpty && country.flagSvg.isEmpty;
+    if (noFlag) {
+      return Center(
+        child: Icon(
+          Icons.flag,
+          size: 64,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+    // Prefer SVG: scales to any size without quality loss (high-quality at 250px height)
+    if (country.flagSvg.isNotEmpty) {
+      return SvgPicture.network(
+        country.flagSvg,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: 250,
+        placeholderBuilder: (context) => Center(
+          child: SizedBox(
+            width: 48,
+            height: 48,
+            child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
+      );
+    }
+    return Image.network(
+      country.flagPng,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: 250,
+      filterQuality: FilterQuality.high,
+      errorBuilder: (context, error, stackTrace) {
+        return Center(
+          child: Icon(
+            Icons.flag,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        );
+      },
     );
   }
 

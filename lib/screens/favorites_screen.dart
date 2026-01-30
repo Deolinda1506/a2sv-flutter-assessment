@@ -193,14 +193,16 @@ class FavoritesScreenState extends State<FavoritesScreen> {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Column 1: flags (fixed width so all flags align)
-            SizedBox(
-              width: 56,
-              height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: SizedBox(
+          height: 56,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Column 1: flags (fixed size, left-aligned)
+              SizedBox(
+                width: 56,
+                height: 40,
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -281,6 +283,7 @@ class FavoritesScreenState extends State<FavoritesScreen> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

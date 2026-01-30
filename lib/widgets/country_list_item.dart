@@ -23,14 +23,16 @@ class CountryListItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Column 1: flags (fixed width so all flags align)
-              SizedBox(
-                width: 56,
-                height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: SizedBox(
+            height: 56,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Column 1: flags (fixed size, left-aligned)
+                SizedBox(
+                  width: 56,
+                  height: 40,
                 child: Hero(
                   tag: 'flag_${country.cca2}',
                   child: Container(
@@ -109,6 +111,7 @@ class CountryListItem extends StatelessWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );
