@@ -82,8 +82,8 @@ These choices support automated testing, accessibility (Semantics on key actions
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/Deolinda1506/a2sv-flutter-assessment.git
-   cd a2sv-flutter-assessment
+   git clone https://github.com/Deolinda1506/a2sv-countries-app.git
+   cd a2sv-countries-app
    ```
 
 2. **Install dependencies**
@@ -162,9 +162,7 @@ This app uses the [REST Countries API](https://restcountries.com/):
 - **Dependency injection** – `get_it` service locator
 - **Sorting** – Name (A–Z) and Population (high → low) on Home
 - **Tablet/Web support** – Responsive layout:
-  - **≥600 px**: Navigation rail instead of bottom bar; country list as 2-column grid
-  - **≥900 px**: 3-column grid for countries
-  - Favorites screen uses the same grid on larger widths
+  - **Larger screens**: Bottom nav on all sizes; country list as 2- or 3-column grid depending on width; Favorites screen uses the same grid
 - **Code generation** – `freezed` for immutable data models and `json_serializable` for JSON parsing (`CountrySummary`, `CountryDetails`, plus nested `NameDto`/`FlagsDto` for API shape). Regenerate with: `dart run build_runner build --delete-conflicting-outputs`
 
 ## Dependencies
