@@ -6,6 +6,7 @@ import '../bloc/country_detail/country_detail_event.dart';
 import '../bloc/country_detail/country_detail_state.dart';
 import '../di/service_locator.dart';
 import '../models/country_details.dart';
+import '../utils/layout.dart';
 
 /// Screen displaying detailed information about a country
 class CountryDetailScreen extends StatelessWidget {
@@ -90,26 +91,33 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image (large, rounded corners, teal background per Figma)
+                    // Flag image (responsive: constrained on large screens for better quality)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Hero(
-                        tag: 'flag_${country.cca2}',
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                              width: 1,
-                            ),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: isTabletOrLarger(context) ? 600 : double.infinity,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(11),
+                          child: Hero(
+                            tag: 'flag_${country.cca2}',
                             child: Container(
-                              width: double.infinity,
-                              height: 250,
-                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: _buildDetailFlag(context, country),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                                  width: 1,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(11),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: _detailFlagHeight(context),
+                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                  child: _buildDetailFlag(context, country),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -185,8 +193,17 @@ class CountryDetailScreen extends StatelessWidget {
     );
   }
 
-  /// Use SVG when available for sharp scaling at large size; fallback to PNG with high filter quality.
+  /// Large, high-quality flag: responsive height (prominent on all screens).
+  static double _detailFlagHeight(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width >= kDesktopBreakpoint) return 420;
+    if (width >= kTabletBreakpoint) return 360;
+    return 280;
+  }
+
+  /// Large, high-quality flag: SVG preferred (crisp at any size); PNG with high-res URL + FilterQuality.high.
   Widget _buildDetailFlag(BuildContext context, CountryDetails country) {
+    final height = _detailFlagHeight(context);
     final noFlag = country.flagPng.isEmpty && country.flagSvg.isEmpty;
     if (noFlag) {
       return Center(
@@ -197,37 +214,50 @@ class CountryDetailScreen extends StatelessWidget {
         ),
       );
     }
-    // Prefer SVG: scales to any size without quality loss (high-quality at 250px height)
+    // SVG: large, high-quality at any size (resolution-independent)
     if (country.flagSvg.isNotEmpty) {
-      return SvgPicture.network(
-        country.flagSvg,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: 250,
-        placeholderBuilder: (context) => Center(
-          child: SizedBox(
-            width: 48,
-            height: 48,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
+      return Semantics(
+        image: true,
+        label: 'Large flag of ${country.name}',
+        child: SvgPicture.network(
+          country.flagSvg,
+          fit: BoxFit.contain,
+          width: double.infinity,
+          height: height,
+          placeholderBuilder: (context) => Center(
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
+            ),
           ),
         ),
       );
     }
-    return Image.network(
-      country.flagPng,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: 250,
-      filterQuality: FilterQuality.high,
-      errorBuilder: (context, error, stackTrace) {
-        return Center(
-          child: Icon(
-            Icons.flag,
-            size: 64,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        );
-      },
+    // PNG: use higher-res URL (w640 phone, w1280 tablet+) for large, high-quality display
+    final useW1280 = isTabletOrLarger(context) && country.flagPng.contains('w320');
+    final pngUrl = country.flagPng.contains('w320')
+        ? country.flagPng.replaceFirst('w320', useW1280 ? 'w1280' : 'w640')
+        : country.flagPng;
+    return Semantics(
+      image: true,
+      label: 'Large flag of ${country.name}',
+      child: Image.network(
+        pngUrl,
+        fit: BoxFit.contain,
+        width: double.infinity,
+        height: height,
+        filterQuality: FilterQuality.high,
+        errorBuilder: (context, error, stackTrace) {
+          return Center(
+            child: Icon(
+              Icons.flag,
+              size: 64,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          );
+        },
+      ),
     );
   }
 
