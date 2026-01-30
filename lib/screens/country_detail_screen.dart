@@ -91,41 +91,28 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image: thin border around flag only (2:1 aspect ratio, theme color).
+                    // Flag image: container sized to the flag's aspect ratio. In light mode, a subtle outline so white flags stay visible.
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Center(
-                        child: Hero(
-                          tag: 'flag_${country.cca2}',
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints(
-                              maxWidth: MediaQuery.sizeOf(context).width - 32,
-                              maxHeight: _detailFlagHeight(context),
-                            ),
-                            child: AspectRatio(
-                              aspectRatio: 2 / 1,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Theme.of(context).colorScheme.outline,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return _buildDetailFlag(
-                                        context,
-                                        country,
-                                        constraints.maxWidth,
-                                        constraints.maxHeight,
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
+                      child: Hero(
+                        tag: 'flag_${country.cca2}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            decoration: Theme.of(context).brightness == Brightness.light
+                                ? BoxDecoration(
+                                    border: Border.all(
+                                      color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+                                      width: 1,
+                                    ),
+                                    borderRadius: BorderRadius.circular(12),
+                                  )
+                                : null,
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                final maxWidth = constraints.maxWidth;
+                                return _buildDetailFlag(context, country, maxWidth);
+                              },
                             ),
                           ),
                         ),
@@ -201,25 +188,20 @@ class CountryDetailScreen extends StatelessWidget {
     );
   }
 
-  /// Large, high-quality flag: responsive height (prominent on all screens).
-  static double _detailFlagHeight(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    if (width >= kDesktopBreakpoint) return 420;
-    if (width >= kTabletBreakpoint) return 360;
-    return 280;
-  }
-
-  /// Large, high-quality flag. Optional [width] and [height] when inside AspectRatio so border fits the flag.
-  Widget _buildDetailFlag(BuildContext context, CountryDetails country, [double? width, double? height]) {
-    final h = height ?? _detailFlagHeight(context);
-    final w = width ?? double.infinity;
+  /// Large, high-quality flag. [maxWidth] constrains width; height follows the flag's intrinsic aspect ratio so no box is bigger than the flag.
+  Widget _buildDetailFlag(BuildContext context, CountryDetails country, [double? maxWidth]) {
+    final w = maxWidth ?? MediaQuery.sizeOf(context).width - 32;
     final noFlag = country.flagPng.isEmpty && country.flagSvg.isEmpty;
     if (noFlag) {
-      return Center(
-        child: Icon(
-          Icons.flag,
-          size: 64,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+      return SizedBox(
+        width: w,
+        height: w * 0.5,
+        child: Center(
+          child: Icon(
+            Icons.flag,
+            size: 64,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -232,18 +214,21 @@ class CountryDetailScreen extends StatelessWidget {
           country.flagSvg,
           fit: BoxFit.contain,
           width: w,
-          height: h,
-          placeholderBuilder: (context) => Center(
-            child: SizedBox(
-              width: 48,
-              height: 48,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
+          placeholderBuilder: (context) => SizedBox(
+            width: w,
+            height: w * 0.5,
+            child: Center(
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.primary),
+              ),
             ),
           ),
         ),
       );
     }
-    // PNG: use higher-res URL (w640 phone, w1280 tablet+) for large, high-quality display
+    // PNG: width constrained; height from image intrinsic aspect ratio so container wraps the flag exactly.
     final useW1280 = isTabletOrLarger(context) && country.flagPng.contains('w320');
     final pngUrl = country.flagPng.contains('w320')
         ? country.flagPng.replaceFirst('w320', useW1280 ? 'w1280' : 'w640')
@@ -255,8 +240,27 @@ class CountryDetailScreen extends StatelessWidget {
         pngUrl,
         fit: BoxFit.contain,
         width: w,
-        height: h,
         filterQuality: FilterQuality.high,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return SizedBox(
+            width: w,
+            height: w * 0.5,
+            child: Center(
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes!)
+                      : null,
+                  strokeWidth: 2,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
           return Center(
             child: Icon(

@@ -199,33 +199,44 @@ class FavoritesScreenState extends State<FavoritesScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Column 1: flags (fixed size, rounded corners, no box/border)
+              // Column 1: flags (fixed size, rounded corners; light mode: subtle outline so white flags are visible)
               SizedBox(
                 width: 56,
                 height: 40,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: country.flagPng.isEmpty
-                      ? Container(
-                          width: 56,
-                          height: 40,
-                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                          child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                        )
-                      : Image.network(
-                          country.flagPng,
-                          width: 56,
-                          height: 40,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 56,
-                              height: 40,
-                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                              child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                            );
-                          },
-                        ),
+                  child: Container(
+                    decoration: Theme.of(context).brightness == Brightness.light
+                        ? BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                          )
+                        : null,
+                    child: country.flagPng.isEmpty
+                        ? Container(
+                            width: 56,
+                            height: 40,
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          )
+                        : Image.network(
+                            country.flagPng,
+                            width: 56,
+                            height: 40,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 56,
+                                height: 40,
+                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                                child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              );
+                            },
+                          ),
+                  ),
                 ),
               ),
             const SizedBox(width: 16),

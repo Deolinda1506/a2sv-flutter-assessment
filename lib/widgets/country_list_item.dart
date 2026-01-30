@@ -29,7 +29,7 @@ class CountryListItem extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Column 1: flags (fixed size, rounded corners, no box/border)
+                // Column 1: flags (fixed size, rounded corners; light mode: subtle outline so white flags are visible)
                 SizedBox(
                   width: 56,
                   height: 40,
@@ -37,17 +37,28 @@ class CountryListItem extends StatelessWidget {
                     tag: 'flag_${country.cca2}',
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: country.flagPng.isEmpty
-                          ? _buildNoFlagPlaceholder(context, 56, 40)
-                          : Image.network(
-                              country.flagPng,
-                              width: 56,
-                              height: 40,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return _buildNoFlagPlaceholder(context, 56, 40);
-                              },
-                            ),
+                      child: Container(
+                        decoration: Theme.of(context).brightness == Brightness.light
+                            ? BoxDecoration(
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.35),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              )
+                            : null,
+                        child: country.flagPng.isEmpty
+                            ? _buildNoFlagPlaceholder(context, 56, 40)
+                            : Image.network(
+                                country.flagPng,
+                                width: 56,
+                                height: 40,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return _buildNoFlagPlaceholder(context, 56, 40);
+                                },
+                              ),
+                      ),
                     ),
                   ),
                 ),
