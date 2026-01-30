@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import '../utils/theme_mode_scope.dart';
 
-/// App bar button that cycles theme mode: System → Light → Dark → System.
+/// App bar button that opens a menu to choose theme: System, Light, or Dark.
 class ThemeModeButton extends StatelessWidget {
   const ThemeModeButton({super.key});
-
-  static const _cycle = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
 
   @override
   Widget build(BuildContext context) {
@@ -13,29 +11,62 @@ class ThemeModeButton extends StatelessWidget {
     final current = notifier.value;
 
     IconData icon;
-    String tooltip;
     switch (current) {
       case ThemeMode.light:
         icon = Icons.light_mode;
-        tooltip = 'Light mode (tap for Dark)';
         break;
       case ThemeMode.dark:
         icon = Icons.dark_mode;
-        tooltip = 'Dark mode (tap for System)';
         break;
       case ThemeMode.system:
         icon = Icons.brightness_auto;
-        tooltip = 'System theme (tap for Light)';
     }
 
-    return IconButton(
-      icon: Icon(icon),
-      tooltip: tooltip,
-      onPressed: () {
-        final idx = _cycle.indexOf(current);
-        notifier.value = _cycle[(idx + 1) % _cycle.length];
-      },
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return PopupMenuButton<ThemeMode>(
+      tooltip: 'Theme',
+      icon: Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      onSelected: (mode) => notifier.value = mode,
+      itemBuilder: (context) => [
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.system,
+          child: Row(
+            children: [
+              if (current == ThemeMode.system)
+                Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+              if (current == ThemeMode.system) const SizedBox(width: 8),
+              const Icon(Icons.brightness_auto, size: 20),
+              const SizedBox(width: 12),
+              const Text('System'),
+            ],
+          ),
+        ),
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.light,
+          child: Row(
+            children: [
+              if (current == ThemeMode.light)
+                Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+              if (current == ThemeMode.light) const SizedBox(width: 8),
+              const Icon(Icons.light_mode, size: 20),
+              const SizedBox(width: 12),
+              const Text('Light'),
+            ],
+          ),
+        ),
+        PopupMenuItem<ThemeMode>(
+          value: ThemeMode.dark,
+          child: Row(
+            children: [
+              if (current == ThemeMode.dark)
+                Icon(Icons.check, size: 20, color: Theme.of(context).colorScheme.primary),
+              if (current == ThemeMode.dark) const SizedBox(width: 8),
+              const Icon(Icons.dark_mode, size: 20),
+              const SizedBox(width: 12),
+              const Text('Dark'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
