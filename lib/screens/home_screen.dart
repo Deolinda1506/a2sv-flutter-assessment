@@ -231,12 +231,23 @@ class _HomeScreenState extends State<HomeScreen> {
                   final crossAxisCount = listGridCrossAxisCount(context);
                   return RefreshIndicator(
                     onRefresh: () async {
+                      final bloc = context.read<CountriesBloc>();
+                      final completer = Completer<void>();
+                      StreamSubscription<CountriesState>? sub;
+                      void listener(CountriesState state) {
+                        if (state is CountriesLoaded || state is CountriesError) {
+                          sub?.cancel();
+                          if (!completer.isCompleted) completer.complete();
+                        }
+                      }
+                      sub = bloc.stream.listen(listener);
                       final query = _searchController.text.trim();
                       if (query.isEmpty) {
-                        context.read<CountriesBloc>().add(const LoadCountries(fromUser: true));
+                        bloc.add(const LoadCountries(fromUser: true));
                       } else {
-                        context.read<CountriesBloc>().add(SearchCountries(query));
+                        bloc.add(SearchCountries(query));
                       }
+                      await completer.future;
                     },
                     child: crossAxisCount == 1
                         ? ListView.builder(
