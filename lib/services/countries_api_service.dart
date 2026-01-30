@@ -37,6 +37,7 @@ class CountriesApiService {
 
   /// Search countries by name with minimal data for lists
   /// Returns only: name, flags, population, cca2
+  /// Results are filtered client-side so only names containing the query are shown (API can return extra for short queries).
   Future<List<CountrySummary>> searchCountriesByName(String name) async {
     try {
       final response = await _dio.get(
@@ -47,9 +48,12 @@ class CountriesApiService {
       );
 
       if (response.statusCode == 200 && response.data is List) {
-        return (response.data as List)
+        final list = (response.data as List)
             .map((json) => CountrySummary.fromJson(json as Map<String, dynamic>))
             .toList();
+        final query = name.trim().toLowerCase();
+        if (query.isEmpty) return list;
+        return list.where((c) => c.name.toLowerCase().contains(query)).toList();
       }
       throw Exception('Failed to search countries');
     } on DioException catch (e) {
