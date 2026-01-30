@@ -2,6 +2,51 @@
 
 A Flutter mobile application for browsing and exploring countries using the REST Countries API. Built for A2SV Technical Assessment.
 
+---
+
+## How to Set Up and Run Locally
+
+### Prerequisites
+- **Flutter SDK** (3.10.1 or higher) and **Dart SDK**
+- **Android Studio** or **Xcode** (for mobile development)
+- An internet connection (for API calls)
+
+### Steps
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Deolinda1506/a2sv-flutter-assessment.git
+   cd a2sv-flutter-assessment
+   ```
+2. **Install dependencies**
+   ```bash
+   flutter pub get
+   ```
+3. **Run the app**
+   ```bash
+   flutter run
+   ```
+   Select a device or emulator when prompted. To build a release APK: `flutter build apk --release` (output: `build/app/outputs/flutter-apk/app-release.apk`).
+
+---
+
+## Environment Variables
+
+**None required.** The app uses the public [REST Countries API](https://restcountries.com/) only. No API keys, `.env` files, or secrets are needed.
+
+---
+
+## Technology and Architectural Choices
+
+- **State management – BLoC:** Keeps business logic out of the UI and makes loading/loaded/error flows explicit and testable. Implemented with `flutter_bloc` and distinct events/states per feature.
+- **HTTP – Dio:** Used for interceptors, error handling, and request/response transformation (`CountriesApiService`).
+- **Local storage – SharedPreferences:** Simple key-value storage for favorite country codes, with `FavoritesService` for add/remove/toggle and persistence.
+- **Models – Freezed + json_serializable:** Immutable DTOs with generated equality and JSON parsing; two-step fetching: minimal fields for lists, full details only when opening a country.
+- **Dependency injection – get_it:** Services registered in `di/service_locator.dart`; screens and blocs get them via `getIt()` for testability.
+
+See **Design Decisions** and **Technology & Architecture Choices** below for more detail.
+
+---
+
 ## Features
 
 - **Browse Countries**: View a scrollable list of all countries with flags, names, and population
@@ -14,10 +59,24 @@ A Flutter mobile application for browsing and exploring countries using the REST
 ## Project Structure
 
 ```
+a2sv-flutter-assessment/
+├── lib/                     # App source code (see below)
+├── test/                    # Unit and widget tests
+├── android/                 # Android platform files
+├── ios/                     # iOS platform files
+├── linux/                   # Linux desktop support
+├── macos/                   # macOS desktop support
+├── web/                     # Web support
+├── windows/                 # Windows desktop support
+├── pubspec.yaml             # Dependencies and project config
+├── analysis_options.yaml    # Dart/Flutter lint rules
+└── README.md
+
 lib/
 ├── bloc/                    # State management (BLoC pattern)
-│   ├── countries/          # Countries list BLoC
-│   └── country_detail/     # Country detail BLoC
+│   ├── countries/           # Countries list BLoC
+│   └── country_detail/      # Country detail BLoC
+├── di/                      # Dependency injection (get_it)
 ├── models/                  # Data models
 │   ├── country_summary.dart
 │   └── country_details.dart
@@ -29,10 +88,12 @@ lib/
 ├── services/                # Business logic services
 │   ├── countries_api_service.dart
 │   └── favorites_service.dart
+├── utils/                   # Layout and theme helpers
 ├── widgets/                 # Reusable widgets
 │   ├── country_list_item.dart
-│   └── shimmer_loader.dart
-└── main.dart               # App entry point
+│   ├── shimmer_loader.dart
+│   └── theme_mode_button.dart
+└── main.dart                # App entry point
 ```
 
 ## Design Decisions
@@ -68,49 +129,10 @@ These choices support automated testing, accessibility (Semantics on key actions
 - **Step 1**: Fetch minimal data (name, flags, population, cca2) for lists to improve performance
 - **Step 2**: Fetch full details (including capital, area, timezones) only when viewing country details
 
-## Setup Instructions
-
-### Prerequisites
-- Flutter SDK (3.10.1 or higher)
-- Dart SDK
-- Android Studio / Xcode (for mobile development)
-- An internet connection (for API calls)
-
-**Environment variables:** None required. The app uses the public REST Countries API.
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Deolinda1506/a2sv-countries-app.git
-   cd a2sv-countries-app
-   ```
-
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Run the app**
-   ```bash
-   flutter run
-   ```
-
-### Building APK
-
-To build an APK for Android:
-
-```bash
-flutter build apk --release
-```
-
-The APK will be located at: `build/app/outputs/flutter-apk/app-release.apk`
-
-### Before submission (best practices)
-
-- **No secrets:** Keep the project as-is: no `.env` with keys, no hardcoded secrets. The app uses the public REST Countries API only.
-- **After adding a dependency:** Run `flutter pub get` and then `flutter run` or `flutter build apk --release`, and fix any errors before considering the project done.
-- **After regenerating code:** If you run `dart run build_runner build --delete-conflicting-outputs`, run `flutter test` and a quick manual test afterward. Don’t commit half-regenerated code.
+### Build and best practices
+- **Release APK:** `flutter build apk --release` → output at `build/app/outputs/flutter-apk/app-release.apk`
+- After adding a dependency: run `flutter pub get`, then `flutter run` or `flutter build apk --release`.
+- After regenerating code (`dart run build_runner build --delete-conflicting-outputs`): run `flutter test` and a quick manual test.
 
 ## API Usage
 
