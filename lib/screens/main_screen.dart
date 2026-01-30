@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import '../utils/layout.dart';
 import 'home_screen.dart';
 import 'favorites_screen.dart';
 
-/// Main screen with bottom navigation (mobile) or rail (tablet/web)
+/// Main screen with bottom navigation (Home and Favorites) on all screen sizes.
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -29,41 +28,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final useRail = isTabletOrLarger(context);
-
-    if (useRail) {
-      return Scaffold(
-        body: Row(
-          children: [
-            NavigationRail(
-              selectedIndex: _currentIndex,
-              onDestinationSelected: _onTabTapped,
-              labelType: NavigationRailLabelType.all,
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: Text('Home'),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.favorite_border),
-                  selectedIcon: Icon(Icons.favorite),
-                  label: Text('Favorites'),
-                ),
-              ],
-            ),
-            const VerticalDivider(thickness: 1, width: 1),
-            Expanded(
-              child: IndexedStack(
-                index: _currentIndex,
-                children: _screens,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
