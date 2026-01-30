@@ -91,17 +91,16 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image (full width, high quality)
+                    // Flag image (full width, high quality, no box)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                       child: Hero(
                         tag: 'flag_${country.cca2}',
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             height: _detailFlagHeight(context),
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
                             child: _buildDetailFlag(context, country),
                           ),
                         ),
