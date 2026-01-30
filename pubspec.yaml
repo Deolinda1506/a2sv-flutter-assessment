@@ -37,6 +37,7 @@ dependencies:
   
   # State Management
   flutter_bloc: ^8.1.6
+  bloc_concurrency: ^0.2.4
   
   # HTTP Client
   dio: ^5.4.0

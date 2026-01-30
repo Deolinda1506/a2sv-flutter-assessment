@@ -25,15 +25,18 @@ class CountriesLoaded extends CountriesState {
   final List<CountrySummary> countries;
   final Set<String> favoriteCountryCodes;
   final CountriesSortOption sortOption;
+  /// True when this list is from a search (so initial LoadCountries should not overwrite it).
+  final bool isSearchResult;
 
   const CountriesLoaded({
     required this.countries,
     required this.favoriteCountryCodes,
     this.sortOption = CountriesSortOption.populationDesc,
+    this.isSearchResult = false,
   });
 
   @override
-  List<Object?> get props => [countries, favoriteCountryCodes, sortOption];
+  List<Object?> get props => [countries, favoriteCountryCodes, sortOption, isSearchResult];
 
   /// Check if a country is favorited
   bool isFavorite(String cca2) {

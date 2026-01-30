@@ -2,12 +2,14 @@
 
 A Flutter mobile application for browsing and exploring countries using the REST Countries API. Built for A2SV Technical Assessment.
 
+**Repository:** [https://github.com/Deolinda1506/a2sv-flutter-assessment](https://github.com/Deolinda1506/a2sv-flutter-assessment)
+
 ---
 
 ## How to Set Up and Run Locally
 
 ### Prerequisites
-- **Flutter SDK** (3.10.1 or higher) and **Dart SDK**
+- **Flutter SDK** 3.38.3 or higher (**Dart** 3.10.1 or higher)
 - **Android Studio** or **Xcode** (for mobile development)
 - An internet connection (for API calls)
 

@@ -11,7 +11,14 @@ abstract class CountriesEvent extends Equatable {
 
 /// Load all countries
 class LoadCountries extends CountriesEvent {
-  const LoadCountries();
+  /// When true, always emit (e.g. user pulled to refresh or cleared search).
+  /// When false (e.g. initial load), do not overwrite if we're already showing search results.
+  final bool fromUser;
+
+  const LoadCountries({this.fromUser = false});
+
+  @override
+  List<Object?> get props => [fromUser];
 }
 
 /// Search countries by name

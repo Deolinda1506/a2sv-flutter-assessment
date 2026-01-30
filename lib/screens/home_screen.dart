@@ -231,7 +231,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   final crossAxisCount = listGridCrossAxisCount(context);
                   return RefreshIndicator(
                     onRefresh: () async {
-                      context.read<CountriesBloc>().add(const LoadCountries());
+                      final query = _searchController.text.trim();
+                      if (query.isEmpty) {
+                        context.read<CountriesBloc>().add(const LoadCountries(fromUser: true));
+                      } else {
+                        context.read<CountriesBloc>().add(SearchCountries(query));
+                      }
                     },
                     child: crossAxisCount == 1
                         ? ListView.builder(

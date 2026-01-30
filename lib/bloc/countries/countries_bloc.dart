@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/country_summary.dart';
 import '../../services/countries_api_service.dart';
@@ -18,8 +19,8 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
   })  : _apiService = apiService,
         _favoritesService = favoritesService,
         super(const CountriesInitial()) {
-    on<LoadCountries>(_onLoadCountries);
-    on<SearchCountries>(_onSearchCountries);
+    on<LoadCountries>(_onLoadCountries, transformer: concurrent());
+    on<SearchCountries>(_onSearchCountries, transformer: concurrent());
     on<ToggleFavorite>(_onToggleFavorite);
     on<RefreshFavorites>(_onRefreshFavorites);
     on<SetCountriesSort>(_onSetCountriesSort);
@@ -60,10 +61,15 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     try {
       final countries = _applySort(await _apiService.getAllCountries());
       final favoriteCodes = await _favoritesService.getFavoriteCountryCodes();
+      // If this was the initial load (not from user) and we're already showing search results, don't overwrite
+      if (!event.fromUser && state is CountriesLoaded && (state as CountriesLoaded).isSearchResult) {
+        return;
+      }
       emit(CountriesLoaded(
         countries: countries,
         favoriteCountryCodes: favoriteCodes,
         sortOption: _sortOption,
+        isSearchResult: false,
       ));
     } catch (e) {
       emit(CountriesError(e.toString()));
@@ -75,7 +81,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     Emitter<CountriesState> emit,
   ) async {
     if (event.query.isEmpty) {
-      add(const LoadCountries());
+      add(const LoadCountries(fromUser: true));
       return;
     }
 
@@ -88,6 +94,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         countries: countries,
         favoriteCountryCodes: favoriteCodes,
         sortOption: _sortOption,
+        isSearchResult: true,
       ));
     } catch (e) {
       emit(CountriesError(e.toString()));
@@ -106,6 +113,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         countries: currentState.countries,
         favoriteCountryCodes: favoriteCodes,
         sortOption: currentState.sortOption,
+        isSearchResult: currentState.isSearchResult,
       ));
     }
   }
@@ -136,6 +144,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
         countries: _applySort(currentState.countries),
         favoriteCountryCodes: currentState.favoriteCountryCodes,
         sortOption: _sortOption,
+        isSearchResult: currentState.isSearchResult,
       ));
     } else {
       add(const LoadCountries());
