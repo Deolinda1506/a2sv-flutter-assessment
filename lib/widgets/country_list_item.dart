@@ -27,90 +27,90 @@ class CountryListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Left side: flag + name + population as one block
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 56,
-                      height: 40,
-                      child: Hero(
-                        tag: 'flag_${country.cca2}',
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(7),
-                            child: country.flagPng.isEmpty
-                                ? _buildNoFlagPlaceholder(context, 56, 40)
-                                : Image.network(
-                                    country.flagPng,
-                                    width: 56,
-                                    height: 40,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return _buildNoFlagPlaceholder(context, 56, 40);
-                                    },
-                                  ),
-                          ),
-                        ),
+              // Column 1: flags (fixed width so all flags align)
+              SizedBox(
+                width: 56,
+                height: 40,
+                child: Hero(
+                  tag: 'flag_${country.cca2}',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            country.name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.onSurface,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(7),
+                      child: country.flagPng.isEmpty
+                          ? _buildNoFlagPlaceholder(context, 56, 40)
+                          : Image.network(
+                              country.flagPng,
+                              width: 56,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildNoFlagPlaceholder(context, 56, 40);
+                              },
                             ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Population: ${country.formattedPopulation}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              // Column 2: name + population (takes remaining space so names align)
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      country.name,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Population: ${country.formattedPopulation}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
+              // Column 3: hearts (fixed width so all hearts align on the right)
               Semantics(
-              label: isFavorite
-                  ? 'Remove ${country.name} from favorites'
-                  : 'Add ${country.name} to favorites',
-              button: true,
-              child: IconButton(
-                onPressed: onFavoriteTap,
-                icon: Icon(
-                  isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurfaceVariant,
+                label: isFavorite
+                    ? 'Remove ${country.name} from favorites'
+                    : 'Add ${country.name} to favorites',
+                button: true,
+                child: SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    onPressed: onFavoriteTap,
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: isFavorite ? Colors.red : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 

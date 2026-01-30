@@ -181,93 +181,108 @@ class FavoritesScreenState extends State<FavoritesScreen> {
   Widget _buildFavoriteItem(BuildContext context, int index) {
     final country = _favoriteCountries[index];
     return InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CountryDetailScreen(
-                  cca2: country.cca2,
-                  countryName: country.name,
-                ),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                // Flag (placeholder when no URL or load fails; border for white/light flags)
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(7),
-                    child: country.flagPng.isEmpty
-                        ? Container(
-                            width: 56,
-                            height: 40,
-                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                            child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                          )
-                        : Image.network(
-                            country.flagPng,
-                            width: 56,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 56,
-                                height: 40,
-                                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                              );
-                            },
-                          ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Country name and capital
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        country.name,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        country.capital != null && country.capital!.isNotEmpty
-                            ? 'Capital: ${country.capital}'
-                            : 'Population: ${country.formattedPopulation}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                // Favorite icon
-                IconButton(
-                  onPressed: () => _toggleFavorite(country.cca2),
-                  icon: const Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ),
-                ),
-              ],
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CountryDetailScreen(
+              cca2: country.cca2,
+              countryName: country.name,
             ),
           ),
         );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Column 1: flags (fixed width so all flags align)
+            SizedBox(
+              width: 56,
+              height: 40,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: country.flagPng.isEmpty
+                      ? Container(
+                          width: 56,
+                          height: 40,
+                          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                          child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        )
+                      : Image.network(
+                          country.flagPng,
+                          width: 56,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              width: 56,
+                              height: 40,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                              child: Icon(Icons.flag, size: 24, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            // Column 2: name + capital/population (takes remaining space so names align)
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    country.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    country.capital != null && country.capital!.isNotEmpty
+                        ? 'Capital: ${country.capital}'
+                        : 'Population: ${country.formattedPopulation}',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            // Column 3: hearts (fixed width so all hearts align on the right)
+            SizedBox(
+              width: 48,
+              height: 48,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                onPressed: () => _toggleFavorite(country.cca2),
+                icon: const Icon(
+                  Icons.favorite,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
