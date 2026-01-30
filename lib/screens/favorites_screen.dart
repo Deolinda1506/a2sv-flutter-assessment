@@ -199,20 +199,12 @@ class FavoritesScreenState extends State<FavoritesScreen> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Column 1: flags (fixed size, left-aligned)
+              // Column 1: flags (fixed size, rounded corners, no box/border)
               SizedBox(
                 width: 56,
                 height: 40,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(7),
+                  borderRadius: BorderRadius.circular(8),
                   child: country.flagPng.isEmpty
                       ? Container(
                           width: 56,
@@ -236,7 +228,6 @@ class FavoritesScreenState extends State<FavoritesScreen> {
                         ),
                 ),
               ),
-            ),
             const SizedBox(width: 16),
             // Column 2: name + capital/population (takes remaining space so names align)
             Expanded(

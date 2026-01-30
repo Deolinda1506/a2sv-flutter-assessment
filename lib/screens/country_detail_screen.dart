@@ -91,7 +91,7 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image: border only around the flag (3:2 aspect ratio so no empty box).
+                    // Flag image: thin border around flag only (2:1 aspect ratio, theme color).
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                       child: Center(
@@ -103,12 +103,12 @@ class CountryDetailScreen extends StatelessWidget {
                               maxHeight: _detailFlagHeight(context),
                             ),
                             child: AspectRatio(
-                              aspectRatio: 3 / 2,
+                              aspectRatio: 2 / 1,
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: Colors.black,
+                                    color: Theme.of(context).colorScheme.outline,
                                     width: 1,
                                   ),
                                 ),
