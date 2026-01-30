@@ -25,14 +25,25 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     on<SetCountriesSort>(_onSetCountriesSort);
   }
 
+  /// Normalize name for alphabetical sort so Å, Ä, Ö etc. sort with A, A, O (Z–A then shows Z before A).
+  static String _nameSortKey(String name) {
+    const accents = 'àáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
+    const ascii = 'aaaaaaaceeeeiiiinoooooouuuuyy';
+    String s = name.toLowerCase();
+    for (int i = 0; i < accents.length; i++) {
+      s = s.replaceAll(accents[i], ascii[i]);
+    }
+    return s;
+  }
+
   List<CountrySummary> _applySort(List<CountrySummary> countries) {
     final sorted = [...countries];
     switch (_sortOption) {
       case CountriesSortOption.nameAsc:
-        sorted.sort((a, b) => a.name.compareTo(b.name));
+        sorted.sort((a, b) => _nameSortKey(a.name).compareTo(_nameSortKey(b.name)));
         break;
       case CountriesSortOption.nameDesc:
-        sorted.sort((a, b) => b.name.compareTo(a.name));
+        sorted.sort((a, b) => _nameSortKey(b.name).compareTo(_nameSortKey(a.name)));
         break;
       case CountriesSortOption.populationDesc:
         sorted.sort((a, b) => b.population.compareTo(a.population));
