@@ -80,7 +80,8 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     SearchCountries event,
     Emitter<CountriesState> emit,
   ) async {
-    if (event.query.isEmpty) {
+    final query = event.query.trim();
+    if (query.isEmpty) {
       add(const LoadCountries(fromUser: true));
       return;
     }
@@ -88,7 +89,7 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     emit(const CountriesLoading());
     try {
       final countries =
-          _applySort(await _apiService.searchCountriesByName(event.query));
+          _applySort(await _apiService.searchCountriesByName(query));
       final favoriteCodes = await _favoritesService.getFavoriteCountryCodes();
       emit(CountriesLoaded(
         countries: countries,

@@ -91,34 +91,18 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image (responsive: constrained on large screens for better quality)
+                    // Flag image (full width, high quality)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxWidth: isTabletOrLarger(context) ? 600 : double.infinity,
-                          ),
-                          child: Hero(
-                            tag: 'flag_${country.cca2}',
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(11),
-                                child: Container(
-                                  width: double.infinity,
-                                  height: _detailFlagHeight(context),
-                                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                                  child: _buildDetailFlag(context, country),
-                                ),
-                              ),
-                            ),
+                      child: Hero(
+                        tag: 'flag_${country.cca2}',
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            width: double.infinity,
+                            height: _detailFlagHeight(context),
+                            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                            child: _buildDetailFlag(context, country),
                           ),
                         ),
                       ),
