@@ -91,20 +91,42 @@ class CountryDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Flag image (full width, high quality). Light tint in light mode so white flags (e.g. Afghanistan) are visible.
+                    // Flag image: border only around the flag (3:2 aspect ratio so no empty box).
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Hero(
-                        tag: 'flag_${country.cca2}',
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Container(
-                            width: double.infinity,
-                            height: _detailFlagHeight(context),
-                            color: Theme.of(context).brightness == Brightness.light
-                                ? Colors.grey.shade100
-                                : Colors.transparent,
-                            child: _buildDetailFlag(context, country),
+                      child: Center(
+                        child: Hero(
+                          tag: 'flag_${country.cca2}',
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxWidth: MediaQuery.sizeOf(context).width - 32,
+                              maxHeight: _detailFlagHeight(context),
+                            ),
+                            child: AspectRatio(
+                              aspectRatio: 3 / 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.black,
+                                    width: 1,
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                      return _buildDetailFlag(
+                                        context,
+                                        country,
+                                        constraints.maxWidth,
+                                        constraints.maxHeight,
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -187,9 +209,10 @@ class CountryDetailScreen extends StatelessWidget {
     return 280;
   }
 
-  /// Large, high-quality flag: SVG preferred (crisp at any size); PNG with high-res URL + FilterQuality.high.
-  Widget _buildDetailFlag(BuildContext context, CountryDetails country) {
-    final height = _detailFlagHeight(context);
+  /// Large, high-quality flag. Optional [width] and [height] when inside AspectRatio so border fits the flag.
+  Widget _buildDetailFlag(BuildContext context, CountryDetails country, [double? width, double? height]) {
+    final h = height ?? _detailFlagHeight(context);
+    final w = width ?? double.infinity;
     final noFlag = country.flagPng.isEmpty && country.flagSvg.isEmpty;
     if (noFlag) {
       return Center(
@@ -208,8 +231,8 @@ class CountryDetailScreen extends StatelessWidget {
         child: SvgPicture.network(
           country.flagSvg,
           fit: BoxFit.contain,
-          width: double.infinity,
-          height: height,
+          width: w,
+          height: h,
           placeholderBuilder: (context) => Center(
             child: SizedBox(
               width: 48,
@@ -231,8 +254,8 @@ class CountryDetailScreen extends StatelessWidget {
       child: Image.network(
         pngUrl,
         fit: BoxFit.contain,
-        width: double.infinity,
-        height: height,
+        width: w,
+        height: h,
         filterQuality: FilterQuality.high,
         errorBuilder: (context, error, stackTrace) {
           return Center(

@@ -4,6 +4,11 @@ A Flutter mobile application for browsing and exploring countries using the REST
 
 **Repository:** [https://github.com/Deolinda1506/a2sv-flutter-assessment](https://github.com/Deolinda1506/a2sv-flutter-assessment)
 
+A **Drive link** to download the app (APK) and a **short demo video** can be found in this README (see below).
+
+- **Download APK (Drive):** [Add your Google Drive link here]
+- **Demo video:** [Add your demo video link here]
+
 ---
 
 ## How to Set Up and Run Locally
