@@ -6,8 +6,8 @@ A Flutter mobile application for browsing and exploring countries using the REST
 
 A **Drive link** to download the app (APK) and a **short demo video** can be found in this README (see below).
 
-- **Download APK (Drive):** [Add your Google Drive link here]
-- **Demo video:** [Add your demo video link here]
+- **Download APK (Drive):** [https://drive.google.com/file/d/1Ni3UJLAQhggMCx3AMn7QLtqNRvyS_KJh/view?usp=sharing]
+- **Demo video:** [https://drive.google.com/file/d/1G8i4S54MHVb_O1n8mTZi90HPvNQLn0Rs/view?usp=sharing]
 
 ---
 
